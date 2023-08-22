@@ -14,6 +14,8 @@ namespace MVC.DataAccess.Data
         public DbSet<ShoppingCart> ShoppingCarts { get; set; }  
         public DbSet<ApplicationUser> applicationUsers { get; set; }
         public DbSet<Company> Companies { get; set; }
+        public DbSet<OrderHeader> orderHeaders { get; set; }
+        public DbSet<OrderDetail> orderDetail { get; set; }
 
         // Seed Category Table
         protected override void OnModelCreating(ModelBuilder modelBuilder)
