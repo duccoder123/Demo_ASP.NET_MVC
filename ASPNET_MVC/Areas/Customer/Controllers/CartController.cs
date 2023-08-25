@@ -49,9 +49,11 @@ namespace ASPNET_MVC.Areas.Customer.Controllers
 
         public IActionResult Minus(int cardId)
         {
-            var cartfromDb = _unitOfWork.ShoppingCart.Get(u => u.Id == cardId);
+            var cartfromDb = _unitOfWork.ShoppingCart.Get(u => u.Id == cardId, tracked: true);
             if (cartfromDb.Count <= 1)
             {
+                HttpContext.Session.SetInt32(SD.SessionCart,
+            _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == cartfromDb.ApplicationUserId).Count() - 1);
                 _unitOfWork.ShoppingCart.Remove(cartfromDb);
             }
             else
@@ -192,7 +194,9 @@ namespace ASPNET_MVC.Areas.Customer.Controllers
         }
         public IActionResult Remove(int cardId)
         {
-            var cartfromDb = _unitOfWork.ShoppingCart.Get(u => u.Id == cardId);
+            var cartfromDb = _unitOfWork.ShoppingCart.Get(u => u.Id == cardId,tracked : true);
+            HttpContext.Session.SetInt32(SD.SessionCart,
+            _unitOfWork.ShoppingCart.GetAll(u=> u.ApplicationUserId == cartfromDb.ApplicationUserId).Count() - 1);
             _unitOfWork.ShoppingCart.Remove(cartfromDb);
             _unitOfWork.Save();
             return RedirectToAction(nameof(Index));

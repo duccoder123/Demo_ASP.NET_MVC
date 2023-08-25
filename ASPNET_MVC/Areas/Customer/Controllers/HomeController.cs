@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using MVC.DataAccess.Repository.IRepository;
 using MVC.Models;
+using MVC.Utility;
 using System.Diagnostics;
 using System.Security.Claims;
 
@@ -21,6 +22,7 @@ namespace ASPNET_MVC.Areas.Customer.Controllers
 
         public IActionResult Index()
         {
+           
             IEnumerable<Product> productList = _unitOfWork.Product.GetAll(includeProperties: "Category");
             return View(productList);
         }
@@ -52,13 +54,16 @@ namespace ASPNET_MVC.Areas.Customer.Controllers
             {
                 cartFromDb.Count += shoppingCart.Count;
                 _unitOfWork.ShoppingCart.Update(cartFromDb);
+                _unitOfWork.Save();
             }
             else
             {
                 _unitOfWork.ShoppingCart.Add(shoppingCart);
+                _unitOfWork.Save();
+                HttpContext.Session.SetInt32(SD.SessionCart, 
+                _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == userId).Count());
             }
             TempData["success"] = "Cart updated successfully";
-            _unitOfWork.Save();
             return RedirectToAction(nameof(Index));
         }
         public IActionResult Privacy()
