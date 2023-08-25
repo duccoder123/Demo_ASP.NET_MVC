@@ -17,15 +17,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options=>
 );
 // kết nối với libray Stripe ( thanh toán tiền điện tử )
 builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
-// thêm session
-builder.Services.AddDistributedMemoryCache();
-builder.Services.AddSession(options =>
-{
-    options.IdleTimeout = TimeSpan.FromMinutes(100);
-    options.Cookie.HttpOnly = true;
-    options.Cookie.IsEssential = true;
-}
-);
+
 // thêm chức năng định danh
 builder.Services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
 builder.Services.ConfigureApplicationCookie(options =>
@@ -33,6 +25,20 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.LoginPath = $"/Identity/Account/Login";
     options.LogoutPath = $"/Identity/Account/Logout";
     options.AccessDeniedPath = $"/Identity/Account/AccessDenied";
+}
+);
+builder.Services.AddAuthentication().AddFacebook(options =>
+{
+    options.AppId = "217614084294087";
+    options.AppSecret = "35aa944e22fc2c51adbebfffd15025a2";
+});
+// thêm session
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(100);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
 }
 );
 builder.Services.AddRazorPages();
